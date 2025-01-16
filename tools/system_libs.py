@@ -1492,6 +1492,16 @@ class libsockets_proxy(MTLibrary):
   def can_use(self):
     return super(libsockets_proxy, self).can_use() and settings.PROXY_POSIX_SOCKETS
 
+class libsockets_wisp_proxy(MTLibrary):
+  name = 'libsockets_wisp_proxy'
+
+  cflags = ['-Os', '-fno-inline-functions']
+
+  def get_files(self):
+    return [utils.path_from_root('system/lib/wisp/wisp_to_posix_socket.cpp')]
+
+  def can_use(self):
+    return super(libsockets_wisp_proxy, self).can_use() and settings.PROXY_POSIX_SOCKETS and settings.WISP
 
 class crt1(MuslInternalLibrary):
   name = 'crt1'
@@ -2382,8 +2392,10 @@ def get_libs_to_link(args):
     if settings.WASM_EXCEPTIONS:
       add_library('libunwind')
 
-  if settings.PROXY_POSIX_SOCKETS:
+  if settings.PROXY_POSIX_SOCKETS and not settings.WISP:
     add_library('libsockets_proxy')
+  elif settings.WISP:
+    add_library('libsockets_wisp_proxy')
   else:
     add_library('libsockets')
 

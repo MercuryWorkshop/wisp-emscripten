@@ -110,6 +110,7 @@ MINIMAL_PIC_TASKS = MINIMAL_TASKS + [
     'libGL-mt-emu-webgl2-getprocaddr',
     'libGL-mt-emu-webgl2-ofb-getprocaddr',
     'libsockets_proxy',
+    'libsockets_wisp_proxy',
     'libsockets-mt',
     'crtbegin',
     'libsanitizer_common_rt',

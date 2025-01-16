@@ -408,6 +408,7 @@ var WEBSOCKET_URL = 'ws://';
 // from browser to native world.
 // [link]
 var PROXY_POSIX_SOCKETS = false;
+var WISP = false;
 
 // A string containing a comma separated list of WebSocket subprotocols
 // as would be present in the Sec-WebSocket-Protocol header.
