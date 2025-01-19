@@ -80,6 +80,14 @@ var LibraryWisp = {
     return true;
   },
 
+  emscripten_wisp_close__deps: ["$Wisp"],
+  emscripten_wisp_close: (stream_id) => {
+    if (!Wisp.open_streams[stream_id].closed) {
+      Wisp.open_streams[stream_id].stream.close()
+    }
+    Wisp.open_streams[stream_id] = undefined;
+  },
+
 };
 
 addToLibrary(LibraryWisp);

@@ -3,6 +3,7 @@
 // and link with `-lwisp.js`
 
 #include "emscripten/em_types.h"
+#include "unistd.h"
 #include <assert.h>
 #include <cstddef>
 #include <cstdint>
@@ -49,6 +50,9 @@ size_t emscripten_wisp_read(uint32_t stream_id,
 
 EMSCRIPTEN_RESULT
 emscripten_wisp_stream_ready(uint32_t stream_id);
+
+EMSCRIPTEN_RESULT
+emscripten_wisp_close(uint32_t stream_id);
 }
 
 struct SocketFile {
@@ -199,3 +203,32 @@ ssize_t recv(int sockfd, void* buf, size_t len, int flags) {
   wisp_stream_wait(socket_file->stream_id.value());
   return emscripten_wisp_read(socket_file->stream_id.value(), (char*)buf, len);
 }
+
+// This is a function that is *suposed to* proxy close, see library_wasi.js
+// fd_close to see why. Wisp doesnt actual support half closing so it doesnt
+// matter.
+int shutdown(int fd, int) {
+  if (socket_filesystem.find(fd) == socket_filesystem.end()) {
+    errno = EBADF;
+    return -1;
+  }
+
+  if (socket_filesystem[fd].stream_id.has_value()) {
+    emscripten_wisp_close(socket_filesystem[fd].stream_id.value());
+  }
+
+  socket_filesystem.erase(fd);
+  return 0;
+}
+
+#ifdef WISP_FILESYSTEM
+int close(int fd) { return shutdown(fd, 0); }
+
+ssize_t read(int fd, void* buf, size_t count) {
+  return recv(fd, buf, count, 0);
+}
+
+ssize_t write(int fd, const void* buf, size_t count) {
+  return send(fd, buf, count, 0);
+}
+#endif // WISP_FILESYSTEM

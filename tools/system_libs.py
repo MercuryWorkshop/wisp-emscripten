@@ -1003,6 +1003,12 @@ class libc(MuslInternalLibrary,
     self.non_lto_files = self.get_libcall_files()
     super().__init__(**kwargs)
 
+  def get_cflags(self):
+    cflags = super().get_cflags()
+    if settings.WISP_FILESYSTEM and settings.WISP and settings.PROXY_POSIX_SOCKETS:
+      cflags.append("-DWISP_FILESYSTEM")
+    return cflags
+
   def get_libcall_files(self):
     # Combining static linking with LTO is tricky under LLVM.  The codegen that
     # happens during LTO can generate references to new symbols that didn't exist
@@ -1496,6 +1502,12 @@ class libsockets_wisp_proxy(MTLibrary):
   name = 'libsockets_wisp_proxy'
 
   cflags = ['-Os', '-fno-inline-functions']
+
+  def get_cflags(self):
+    cflags = super().get_cflags()
+    if settings.WISP_FILESYSTEM:
+      cflags.append("-DWISP_FILESYSTEM")
+    return cflags
 
   def get_files(self):
     return [utils.path_from_root('system/lib/wisp/wisp_to_posix_socket.cpp')]

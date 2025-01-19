@@ -10,6 +10,7 @@ static int dummy(int fd)
 
 weak_alias(dummy, __aio_close);
 
+#ifndef WISP_FILESYSTEM
 int close(int fd)
 {
 	fd = __aio_close(fd);
@@ -23,3 +24,4 @@ int close(int fd)
 	return __syscall_ret(r);
 #endif
 }
+#endif // WISP_FILESYSTEM

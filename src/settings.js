@@ -408,7 +408,12 @@ var WEBSOCKET_URL = 'ws://';
 // from browser to native world.
 // [link]
 var PROXY_POSIX_SOCKETS = false;
+
+// If PROXY_POSIX_SOCKETS is enabled aswell then proxies all posix sockets over Wisp.
 var WISP = false;
+
+// Replaces all instances of read, write, and close with network equivelents.
+var WISP_FILESYSTEM = false;
 
 // A string containing a comma separated list of WebSocket subprotocols
 // as would be present in the Sec-WebSocket-Protocol header.
